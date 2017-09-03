@@ -23,13 +23,13 @@ This error is only discovered after the rebase process is finished, and is usual
 
 ![Example of erroneous rebasing](rebase-error.gif)
 
-If you do get conflicts during rebasing however, git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts out of context, in the middle of rebasing a long chain of commits, is often confusing, hard to get right, and another source of potential errors.
+If you do get conflicts during rebasing however, Git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts out of context, in the middle of rebasing a long chain of commits, is often confusing, hard to get right, and another source of potential errors.
 
-Introducing errors is extra problematic when it happens during rebasing. This way, new errors are introduced when you rewrite history, and they may disguise genuine bugs that were introduced when history was first written. In particular, this will make it harder to use git bisect, arguably the most powerful debugging tool in the git toolbox. As an example, consider the following feature branch. Let's say we introduced a bug towards the end of the branch.
+Introducing errors is extra problematic when it happens during rebasing. This way, new errors are introduced when you rewrite history, and they may disguise genuine bugs that were introduced when history was first written. In particular, this will make it harder to use Git bisect, arguably the most powerful debugging tool in the Git toolbox. As an example, consider the following feature branch. Let's say we introduced a bug towards the end of the branch.
 
 ![Example of branch with errors](new-error.png)
 
-You may not discover this bug until weeks after the branch was merged to master. To find the commit that introduced the bug, we might have to search through tens or hundreds of commits. This process can be automated by writing a script that tests for the presence of the bug, and running it automatically through git bisect, using the command `git bisect run test.sh`.
+You may not discover this bug until weeks after the branch was merged to master. To find the commit that introduced the bug, we might have to search through tens or hundreds of commits. This process can be automated by writing a script that tests for the presence of the bug, and running it automatically through Git bisect, using the command `git bisect run test.sh`.
 
 Bisect will perform a bisection search through the history, identifying the commit that introduced the bug. In the example shown in figure XXX, it succeeds in finding the first buggy commit, since all the broken commits contain the actual bug we are looking for.
 
