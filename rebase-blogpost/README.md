@@ -23,19 +23,19 @@ This error is only discovered after the rebase process is finished, and is usual
 
 ![Example of erroneous rebasing](rebase-error.gif)
 
-If you do get conflicts during rebasing however, Git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts out of context, in the middle of rebasing a long chain of commits, is often confusing, hard to get right, and another source of potential errors.
+If you do get conflicts during rebasing however, Git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts in the middle of rebasing a long chain of commits, is often confusing, hard to get right, and another source of potential errors.
 
 Introducing errors is extra problematic when it happens during rebasing. This way, new errors are introduced when you rewrite history, and they may disguise genuine bugs that were introduced when history was first written. In particular, this will make it harder to use Git bisect, arguably the most powerful debugging tool in the Git toolbox. As an example, consider the following feature branch. Let's say we introduced a bug towards the end of the branch.
 
 ![Example of branch with errors](new-error.png)
 
-You may not discover this bug until weeks after the branch was merged to master. To find the commit that introduced the bug, we might have to search through tens or hundreds of commits. This process can be automated by writing a script that tests for the presence of the bug, and running it automatically through Git bisect, using the command `git bisect run test.sh`.
+You may not discover this bug until weeks after the branch was merged to master. To find the commit that introduced the bug, you might have to search through tens or hundreds of commits. This process can be automated by writing a script that tests for the presence of the bug, and running it automatically through Git bisect, using the command `git bisect run test.sh`.
 
-Bisect will perform a bisection search through the history, identifying the commit that introduced the bug. In the example shown in figure XXX, it succeeds in finding the first buggy commit, since all the broken commits contain the actual bug we are looking for.
+Bisect will perform a bisection search through the history, identifying the commit that introduced the bug. In the example shown below, it succeeds in finding the first faulty commit, since all the broken commits contain the actual bug we are looking for.
 
 ![Example of successfull debugging with Git bisect](bisect-success.gif)
 
-On the other hand, if we've introduced additional broken commits during rebasing, bisect will run into trouble. In this case, we hope that Git identifies commit f as the bad one, but it erroneously identifies d instead, since it contains some other error that breaks the test.
+On the other hand, if we've introduced additional broken commits during rebasing (here, `d` and `e`), bisect will run into trouble. In this case, we hope that Git identifies commit `f` as the bad one, but it erroneously identifies `d` instead, since it contains some other error that breaks the test.
 
 ![Example of unsuccessfull debugging with Git bisect](bisect-failure.gif)
 
@@ -54,17 +54,17 @@ Another approach would be to have Git pause during every step of the rebase proc
 
 This is a cumbersome and error-prone process, and the only reason for doing it would be to achieve a linear history. Does a simpler and better alternative exist?
 
-Yes it does; good old merging solves all our troubles. It's a simple, one-step process, in which we solve all our conflicts at once. The resulting merge commit clearly marks the integration point between our branches, and our history depicts what actually happened, and when it happened.
+Yes it does; Git merge. It's a simple, one-step process, in which we solve all our conflicts at once. The resulting merge commit clearly marks the integration point between our branches, and our history depicts what actually happened, and when it happened.
 
-The importance of keeping your history true should not be underestimated. By rebasing, we are lying to ourselves and to our team. We pretend that the commits were written today, when they were in fact written yesterday, based on another commit. We've taken the commits out of their original context, disguising what actually happened. Can we be sure that the code builds? Can we be sure that the commit messages still make sense? We may believe that we are cleaning up and clarifying our history, but the result may very well be the opposite.
+The importance of keeping your history true should not be underestimated. By rebasing, you are lying to yourself and to your team. You pretend that the commits were written today, when they were in fact written yesterday, based on another commit. You've taken the commits out of their original context, disguising what actually happened. Can you be sure that the code builds? Can you be sure that the commit messages still make sense? You may believe that you are cleaning up and clarifying your history, but the result may very well be the opposite.
 
-It's impossible to say what errors and troubles the future brings for our codebase. However, you can be sure that it's more likely that the history will be useful in the future if it's true, than if it's untrue.
+It's impossible to say what errors and challenges the future brings for you codebase. However, you can be sure that it's more likely that the history will be useful in the future if it's true, than if it's untrue.
 
 Although this doesn't feel right we still keep doing it. Why is that? What drives us? What is the point?
 
 I've come to the conclusion that it's about vanity. Rebasing is a purely aestetic move. The apparently clean history appeals to us as developers, but it can't be justified, from neither a technical nor functional standpoint.
 
-![Screenshot from GitUp of Git commit graph](gitup.png)
+[![Screenshot from GitUp of Git commit graph](gitup.png)](http://gitup.co/)
 
 The chaotic "train track" graphs are intimidating. They certinaly felt that way to me to begin with, but there's no reason to be scared of them. There are a multitude of magnificent tools to analyse and visualise such history, both GUI- and CLI-based. These graphs contain valuable information about what has happened and when it happened, and we gain nothing by linearizing it.
 
