@@ -1,31 +1,29 @@
 After using Git for several years, I found myself gradually using more and more advanced Git commands as part of my daily workflow. Soon after I discovered Git rebase, I quickly incorporated it into my daily workflow. Those who are familiar with rebasing knows how powerful a tool it is, and it’s tempting to use it all the time. However, I soon discovered that rebasing presents some risks that are not obvious when you first start using it. Before presenting them, we’ll quickly recap the differences between merging and rebasing.
 
-Let’s first consider the basic example where you want to integrate a feature branch with master. By merging, we create a new commit that represents the merge between the two branches. The commit graph clearly shows what has happended, but we can already see the contours of the train track-graph that we know from larger Git-repos.
+Let’s first consider the basic example where you want to integrate a feature branch with master. By merging, we create a new commit (`g`) that represents the merge between the two branches. The commit graph clearly shows what has happended, and we can see the contours of the "train track" graph that we know from larger Git-repos.
 
 ![Example of merging](merge.gif)
 
 Alternatively, we could rebase before merging. Our commits are removed and feature is reset to master, after which our commits are re-applied on top of feature. The diffs of these re-applied commits are usually identical to their original counterparts, but they have different parent commits, and hence different SHA-1 keys.
 
-ILL. 2 (rebase gif)
+![Example of rebasing](rebase.gif)
 
 We’ve now changed the base commit of feature from b to c, literally re-basing it.
 Merging feature to master is now a fast-forward merge, because all commits on feature are direct descendants of master.
 
-ILL. 4 (ff-merge)
+![Example of fast forward merge](rebase-ff.gif)
 
 Compared to the merge approach, the resulting history is linear with no divergent branches. The improved readability is the reason many people prefer to rebase their branches before merging.
 
 However, this approach comes with a set of risks that are not that obvious.
 
-Consider figure 5:
-
-ILL. 5 (gif)
-
-Let’s say a dependency has been removed in master. This will cause the first re-applied commit to break your build, but as long as there are no merge conflicts, the rebase process will continue uninterrupted. The error from the first commit will remain present in all subsequent commits, resulting in a chain of broken commits.
+Let’s say a dependency has been removed in master. When rebasing, will cause the first re-applied commit to break your build, but as long as there are no merge conflicts, the rebase process will continue uninterrupted. The error from the first commit will remain present in all subsequent commits, resulting in a chain of broken commits.
 
 We discover this error only after the rebase process is finished, and usually fix it by applying a new bugfix commit (g) on top.
 
-If you do get conflicts during rebasing, git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts out of context, in the middle of rebasing a long chain of commits, is often confusing, hard to get right, and another source of potential errors.
+![Example of erroneous rebasing](rebase-ff.gif)
+
+If you do get conflicts during rebasing however, git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts out of context, in the middle of rebasing a long chain of commits, is often confusing, hard to get right, and another source of potential errors.
 
 Introducing errors is extra problematic when it happens during rebasing. This way, new errors are introduced when you rewrite history, and they may disguise genuine bugs that were introduced when history was first written. In particular, this will make it harder to use git bisect, arguably the most powerful debugging tool in the git toolbox. As an example, consider the following example feature branch. Let’s say we introduced a bug towards the end of the branch.
 
