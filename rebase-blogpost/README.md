@@ -1,4 +1,4 @@
-After using Git for several years, I found myself gradually using more and more advanced Git commands as part of my daily workflow. Soon after I discovered Git rebase, I quickly incorporated it into my daily workflow. Those who are familiar with rebasing know how powerful a tool it is, and how tempting it is to use it all the time. However, I soon discovered that rebasing presents some risks that are not obvious when you first start doing it. Before presenting them, I'll quickly recap the differences between merging and rebasing.
+After using Git for several years, I found myself gradually using more and more advanced Git commands as part of my daily workflow. Soon after I discovered Git rebase, I quickly incorporated it into my daily workflow. Those who are familiar with rebasing know how powerful a tool it is, and how tempting it is to use it all the time. However, I soon discovered that rebasing presents some challenges that are not obvious when you first start doing it. Before presenting them, I'll quickly recap the differences between merging and rebasing.
 
 Let's first consider the basic example where you want to integrate a feature branch with master. By merging, we create a new commit (`g`) that represents the merge between the two branches. The commit graph clearly shows what has happended, and we can see the contours of the "train track" graph familiar from larger Git-repos.
 
@@ -8,7 +8,7 @@ Alternatively, we could rebase before merging. The commits are removed and featu
 
 ![Example of rebasing](rebase.gif)
 
-We've now changed the base commit of feature from b to c, literally re-basing it.
+We've now changed the base commit of feature from `b` to `c`, literally re-basing it.
 Merging feature to master is now a fast-forward merge, because all commits on feature are direct descendants of master.
 
 ![Example of fast forward merge](rebase-ff.gif)
@@ -17,11 +17,11 @@ Compared to the merge approach, the resulting history is linear with no divergen
 
 However, this approach comes with a set of challenges that are not that obvious.
 
-Let's say a dependency has been removed in master. When rebasing, this will cause the first re-applied commit to break your build, but as long as there are no merge conflicts, the rebase process will continue uninterrupted. The error from the first commit will remain present in all subsequent commits, resulting in a chain of broken commits.
+Let's say a dependency that's still in use in feature has been removed in master. When rebasing, this will cause the first re-applied commit to break your build, but as long as there are no merge conflicts, the rebase process will continue uninterrupted. The error from the first commit will remain present in all subsequent commits, resulting in a chain of broken commits.
 
-This error is only discovered after the rebase process is finished, and is usually fixed by applying a new bugfix commit (g) on top.
+This error is only discovered after the rebase process is finished, and is usually fixed by applying a new bugfix commit (`g`) on top.
 
-![Example of erroneous rebasing](rebase-ff.gif)
+![Example of erroneous rebasing](rebase-error.gif)
 
 If you do get conflicts during rebasing however, git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts out of context, in the middle of rebasing a long chain of commits, is often confusing, hard to get right, and another source of potential errors.
 
