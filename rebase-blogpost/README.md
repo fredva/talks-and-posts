@@ -1,6 +1,6 @@
 After using Git for several years, I found myself gradually using more and more advanced Git commands as part of my daily workflow. Soon after I discovered Git rebase, I quickly incorporated it into my daily workflow. Those who are familiar with rebasing know how powerful a tool it is, and how tempting it is to use it all the time. However, I soon discovered that rebasing presents some challenges that are not obvious when you first start doing it. Before presenting them, I'll quickly recap the differences between merging and rebasing.
 
-Let's first consider the basic example where you want to integrate a feature branch with master. By merging, we create a new commit (`g`) that represents the merge between the two branches. The commit graph clearly shows what has happended, and we can see the contours of the "train track" graph familiar from larger Git-repos.
+Let's first consider the basic example where you want to integrate a feature branch with master. By merging, we create a new commit `g` that represents the merge between the two branches. The commit graph clearly shows what has happended, and we can see the contours of the "train track" graph familiar from larger Git-repos.
 
 ![Example of merging](merge.gif)
 
@@ -13,12 +13,11 @@ Merging `feature` to `master` is now a fast-forward merge, because all commits o
 
 ![Example of fast forward merge](rebase-ff.gif)
 
-Compared to the merge approach, the resulting history is linear with no divergent branches. The improved readability is the reason many people prefer to rebase their branches before merging.
-> Is it? How do you know?
+Compared to the merge approach, the resulting history is linear with no divergent branches. The improved readability was the reason I used to prefer rebasing branches before merging, and I expect this to be the case for other developers as well.
 
 However, this approach has some challenges that may not be obvious.
 
-Consider the case where a dependency that is still in use on `feature` has been removed on `master`. After `feature` has been rebase onto `master`, the first re-applied commit will break your build, but as long as there are no merge conflicts, the rebase process will continue uninterrupted. The error from the first commit will remain present in *all* subsequent commits, resulting in a chain of broken commits.
+Consider the case where a dependency that is still in use on `feature` has been removed on `master`. When `feature` is being rebased onto `master`, the first re-applied commit will break your build, but as long as there are no merge conflicts, the rebase process will continue uninterrupted. The error from the first commit will remain present in *all* subsequent commits, resulting in a chain of broken commits.
 
 This error is only discovered after the rebase process is finished, and is usually fixed by applying a new bugfix commit `g` on top.
 
@@ -44,36 +43,28 @@ This problem is greater than it may seem at first.
 
 Why do we use Git at all? Because it is our most important tool for tracking down the source of bugs in our code. Git is our safety net. By rebasing, we give this less priority, in favour of the desire to achieve a linear history.
 
-This is not only a meaningless prioritization. It is bad craftsmanship, and irresponsible towards the rest of our team.
-> Aslak: The bad craftmanship argument is weak - what constitutes good/bad craftmanship is very subjective. I would focus only on the strongest argument: The ability to quickly diagnose and fix a bug.
-
 A while back, I had to bisect through several hundred commits to track down a bug in our system. The faulty commit was located in the middle of a long chain of commits that didn't compile, due to a faulty rebase a colleague had performed. This uneccessary and totally avoidable error resulted in me spending nearly a day extra in tracking down the commit.
 
 So how can we avoid these chains of broken commits during rebasing?
-One approach could be to let the rebase process finish, test the code to identify any bugs, and go back in history to fix the bugs where they were introduced. To this end, we could use interactive rebasing (LENK DENNE).
+One approach could be to let the rebase process finish, test the code to identify any bugs, and go back in history to fix the bugs where they were introduced. To this end, we could use interactive rebasing.
 
 Another approach would be to have Git pause during every step of the rebase process, test for any bugs and fix them immediately before proceeding.
 
 This is a cumbersome and error-prone process, and the only reason for doing it would be to achieve a linear history. Is there a simpler and better way?
 
-There is; Git merge. It's a simple, one-step process, where all conflicts are resolved in a single commit. The resulting merge commit clearly marks the integration point between our branches, and our history depicts what `actually` happened, and `when` it happened.
+There is; Git merge. It's a simple, one-step process, where all conflicts are resolved in a single commit. The resulting merge commit clearly marks the integration point between our branches, and our history depicts what _actually_ happened, and _when_ it happened.
 
 The importance of keeping your history true should not be underestimated. By rebasing, you are lying to yourself and to your team. You pretend that the commits were written today, when they were in fact written yesterday, based on another commit. You've taken the commits out of their original context, disguising what actually happened. Can you be sure that the code builds? Can you be sure that the commit messages still make sense? You may believe that you are cleaning up and clarifying your history, but the result may very well be the opposite.
-> This has punch!
 
-It's impossible to say what errors and challenges the future brings for you codebase. However, you can be certain that a *true* history will be more useful than a *rewritten* (or fake) one.
+It's impossible to say what errors and challenges the future brings for your codebase. However, you can be certain that a *true* history will be more useful than a *rewritten* (or fake) one.
 
-Although this doesn't feel right we still keep doing it. Why is that? What drives us? What is the point?
-> I think a lot of people who rebase haven't even noticed that it doesn't feel right. So to connect with those
-> I would simply rephrase as:
->
-> What motivates people to rebase branches?
+What motivates people to rebase branches?
 
 I've come to the conclusion that it's about vanity. Rebasing is a purely aesthetic operation. The apparently clean history appeals to us as developers, but it can't be justified, from a technical nor functional standpoint.
 
 [![Screenshot from GitUp of Git commit graph](gitup.png)](http://gitup.co/)
 
-The chaotic "train track" graphs are intimidating. They certinaly felt that way to me to begin with, but there's no reason to be scared of them. There are many magnificent tools that can analyse and visualise complex git history, both GUI- and CLI-based. These graphs contain valuable information about what has happened and when it happened, and we gain nothing by linearising it.
+The chaotic "train track" graphs are intimidating. They certainly felt that way to me to begin with, but there's no reason to be scared of them. There are many magnificent tools that can analyse and visualise complex Git history, both GUI- and CLI-based. These graphs contain valuable information about what has happened and when it happened, and we gain nothing by linearising it.
 
 Git is made for, and encourages, non-linear history. If that puts you off you might be better off using a simpler VCS that only supports linear history.
 
