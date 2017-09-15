@@ -23,7 +23,7 @@ This error is only discovered after the rebase process is finished, and is usual
 
 ![Example of erroneous rebasing](rebase-error.gif)
 
-If you do get conflicts during rebasing however, Git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts in the middle of rebasing a long chain of commits, is often confusing, hard to get right, and another source of potential errors.
+If you do get conflicts during rebasing however, Git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts in the middle of rebasing a long chain of commits is often confusing, hard to get right, and another source of potential errors.
 
 Introducing errors is extra problematic when it happens during rebasing. This way, new errors are introduced when you rewrite history, and they may disguise genuine bugs that were introduced when history was first written. In particular, this will make it harder to use Git bisect, arguably the most powerful debugging tool in the Git toolbox. As an example, consider the following feature branch. Let's say we introduced a bug towards the end of the branch.
 
