@@ -11,7 +11,7 @@ Alternatively, we could rebase before merging. The commits are removed and the `
 We have now changed the base commit of `feature` from `b` to `c`, literally re-basing it.
 Merging `feature` to `master` is now a fast-forward merge, because all commits on `feature` are direct descendants of `master`.
 
-![Example of fast forward merge](rebase-ff.gif)
+![Example of fast-forward merging](rebase-ff.gif)
 
 Compared to the merge approach, the resulting history is linear with no divergent branches. The improved readability was the reason I used to prefer rebasing branches before merging, and I expect this to be the case for other developers as well.
 
@@ -21,23 +21,23 @@ Consider the case where a dependency that is still in use on `feature` has been 
 
 This error is only discovered after the rebase process is finished, and is usually fixed by applying a new bugfix commit `g` on top.
 
-![Example of erroneous rebasing](rebase-error.gif)
+![Example of failed rebasing](rebase-error.gif)
 
 If you do get conflicts during rebasing however, Git will pause on the conflicting commit, allowing you to fix the conflict before proceeding. Solving conflicts in the middle of rebasing a long chain of commits is often confusing, hard to get right, and another source of potential errors.
 
 Introducing errors is extra problematic when it happens during rebasing. This way, new errors are introduced when you rewrite history, and they may disguise genuine bugs that were introduced when history was first written. In particular, this will make it harder to use Git bisect, arguably the most powerful debugging tool in the Git toolbox. As an example, consider the following feature branch. Let's say we introduced a bug towards the end of the branch.
 
-![Example of branch with errors](new-error.png)
+![A branch with bugs introduced towards the end](new-error.png)
 
-You may not discover this bug until weeks after the branch was merged to master. To find the commit that introduced the bug, you might have to search through tens or hundreds of commits. This process can be automated by writing a script that tests for the presence of the bug, and running it automatically through Git bisect, using the command `git bisect run test.sh`.
+You may not discover this bug until weeks after the branch was merged to `master`. To find the commit that introduced the bug, you might have to search through tens or hundreds of commits. This process can be automated by writing a script that tests for the presence of the bug, and running it automatically through Git bisect, using the command `git bisect run <yourtest.sh>`.
 
 Bisect will perform a bisection search through the history, identifying the commit that introduced the bug. In the example shown below, it succeeds in finding the first faulty commit, since all the broken commits contain the actual bug we are looking for.
 
-![Example of successfull debugging with Git bisect](bisect-success.gif)
+![Example of successfull Git bisect](bisect-success.gif)
 
 On the other hand, if we've introduced additional broken commits during rebasing (here, `d` and `e`), bisect will run into trouble. In this case, we hope that Git identifies commit `f` as the bad one, but it erroneously identifies `d` instead, since it contains some other error that breaks the test.
 
-![Example of unsuccessfull debugging with Git bisect](bisect-failure.gif)
+![Example of a failed Git bisect](bisect-failure.gif)
 
 This problem is greater than it may seem at first.
 
@@ -62,10 +62,13 @@ What motivates people to rebase branches?
 
 I've come to the conclusion that it's about vanity. Rebasing is a purely aesthetic operation. The apparently clean history appeals to us as developers, but it can't be justified, from a technical nor functional standpoint.
 
-[![Screenshot from GitUp of Git commit graph](gitup.png)](http://gitup.co/)
+[![Non-linear history. Figure from Paul Hammant](commit-graph.png)]
 
-The chaotic "train track" graphs are intimidating. They certainly felt that way to me to begin with, but there's no reason to be scared of them. There are many magnificent tools that can analyse and visualise complex Git history, both GUI- and CLI-based. These graphs contain valuable information about what has happened and when it happened, and we gain nothing by linearising it.
+Graphs of non-linear history, "train tracks", can be intimidating. They certainly felt that way to me to begin with, but there's no reason to be scared of them. There are many magnificent tools that can analyse and visualise complex Git history, both GUI- and CLI-based. These graphs contain valuable information about what has happened and when it happened, and we gain nothing by linearising it.
 
 Git is made for, and encourages, non-linear history. If that puts you off you might be better off using a simpler VCS that only supports linear history.
 
 I think you should keep your history true. Get comfortable with tools to analyse it, and don't fall for the temptation to rewrite it. The rewards for rewriting are minimal, but the risks are great. You'll thank me the next time you are bisecting through your history to track down a sneaky bug.
+
+_Thanks to Paul Hammant and Aslak Hellesøy for valuable feedback on drafts of this post. Thanks to Paul Hammant for figure of non-linear history. [His excellent site](https://trunkbaseddevelopment.com/short-lived-feature-branches/) is a highly recommended read. Special thanks to Aslak for encouraging me to write this post in the first place._
+_This post is based on a talk given in Norwegian at JavaZone 2016: https://vimeo.com/182068915_
