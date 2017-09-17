@@ -70,6 +70,6 @@ Git is made for, and encourages, non-linear history. If that puts you off you mi
 
 I think you should keep your history true. Get comfortable with tools to analyse it, and don't fall for the temptation to rewrite it. The rewards for rewriting are minimal, but the risks are great. You'll thank me the next time you are bisecting through your history to track down a sneaky bug.
 
-_Thanks to Paul Hammant and Aslak Hellesøy for valuable feedback on drafts of this post. Thanks to Paul Hammant for figure of non-linear history. [His excellent site](https://trunkbaseddevelopment.com/short-lived-feature-branches/) is a highly recommended read. Special thanks to Aslak for encouraging me to write this post in the first place._
+_Thanks to Paul Hammant and Aslak Hellesøy for valuable feedback on drafts of this post. Thanks to Paul Hammant for the figure of non-linear history. [His excellent site](https://trunkbaseddevelopment.com/short-lived-feature-branches/) is a highly recommended read. Special thanks to Aslak for encouraging me to write this post in the first place._
 
 _This post is based on a talk given in Norwegian at JavaZone 2016: https://vimeo.com/182068915_
